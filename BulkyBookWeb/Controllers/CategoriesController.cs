@@ -28,6 +28,15 @@ namespace BulkyBookWeb.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Save(Category category)
         {
+            if (category.Name == category.DisplayOrder.ToString())
+            {
+                ModelState.AddModelError("DisplayOrderAndNameShouldNotMatch", "Display Order cannot be same as Category Name");
+                ModelState.AddModelError("Name", "Display Order cannot be same as Category Name");
+            }
+
+            if (!ModelState.IsValid)
+                return View("CategoryForm", category);
+
             _context.Categories.Add(category);
             _context.SaveChanges();
             return RedirectToAction("Index");

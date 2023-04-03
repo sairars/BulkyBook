@@ -1,18 +1,21 @@
 ﻿@model Category
 
-<form method="post" asp-action="Save">
+<form method="post" asp-controller="Categories" asp-action="Save">
     <div class="border p-3 mt-4">
         <div class="row pb-2">
             <h2 class="text-primary">Create Category</h2>
             <hr />
         </div>
+        <div asp-validation-summary="All" class="text-danger"></div>
         <div class="mb-3">
         <label asp-for="Name" class="form-label"></label>
         <input type="text" asp-for="Name" class="form-control" />
+        <span asp-validation-for="Name" class="text-danger"></span>
         </div>
         <div class="mb-3">
         <label asp-for="DisplayOrder" class="form-label"></label>
         <input type="text" asp-for="DisplayOrder" class="form-control" />
+            <span asp-validation-for="DisplayOrder" class="text-danger"></span>
         </div>
         <button type="submit" class="btn btn-primary">Create</button>
         <a class="btn btn-secondary" role="button" asp-controller="Categories" asp-action="Index">Go Back</a>
