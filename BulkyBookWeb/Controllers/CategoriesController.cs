@@ -1,6 +1,7 @@
-﻿using BulkyBookWeb.Data;
-using BulkyBookWeb.Models;
+﻿using BulkyBook.Models;
+using BulkyBookWeb.Data;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace BulkyBookWeb.Controllers
 {
@@ -13,9 +14,10 @@ namespace BulkyBookWeb.Controllers
             _context = context;
         }
 
-        public IActionResult Index()
+        [ActionName("Index")]
+        public async Task<IActionResult> IndexAsync()
         {
-            var categories = _context.Categories.ToList();
+            var categories = await _context.Categories.ToListAsync();
             return View(categories);
         }
 
@@ -24,9 +26,10 @@ namespace BulkyBookWeb.Controllers
             return View();
         }
 
-        public IActionResult Edit(int id)
+        [ActionName("Edit")]
+        public async Task<IActionResult> EditAsync(int id)
         {
-            var category = _context.Categories.Find(id);
+            var category = await _context.Categories.FindAsync(id);
 
             if (category == null)
                 return NotFound();
@@ -34,9 +37,10 @@ namespace BulkyBookWeb.Controllers
             return View(category);
         }
 
-        public IActionResult Delete(int id)
+        [ActionName("Delete")]
+        public async Task<IActionResult> DeleteAsync(int id)
         {
-            var category = _context.Categories.Find(id);
+            var category = await _context.Categories.FindAsync(id);
 
             if (category == null)
                 return NotFound();
@@ -45,8 +49,9 @@ namespace BulkyBookWeb.Controllers
         }
 
         [HttpPost]
+        [ActionName("Create")]
         [ValidateAntiForgeryToken]
-        public IActionResult Create(Category category)
+        public async Task<IActionResult> CreateAsync(Category category)
         {
             if (category.Name == category.DisplayOrder.ToString())
                 ModelState.AddModelError("DisplayOrder", "Display Order cannot be same as Category Name");
@@ -54,16 +59,18 @@ namespace BulkyBookWeb.Controllers
             if (!ModelState.IsValid)
                 return View(category);
 
-            _context.Categories.Add(category);
-            _context.SaveChanges();
+            await _context.Categories.AddAsync(category);
+            await _context.SaveChangesAsync();
+            
             TempData["success"] = "Category is created successfully";
 
             return RedirectToAction("Index");
         }
 
         [HttpPost]
+        [ActionName("Update")]
         [ValidateAntiForgeryToken]
-        public IActionResult Edit(Category category)
+        public async Task<IActionResult> UpdateAsync(Category category)
         {
             if (category.Name == category.DisplayOrder.ToString())
                 ModelState.AddModelError("DisplayOrder", "Display Order cannot be same as Category Name");
@@ -72,8 +79,9 @@ namespace BulkyBookWeb.Controllers
                 return View(category);
 
             _context.Categories.Update(category);
-            _context.SaveChanges();
-            TempData["success"] = "Category is edited successfully";
+            await _context.SaveChangesAsync();
+
+            TempData["success"] = "Category is updated successfully";
 
             return RedirectToAction("Index");
         }
@@ -81,7 +89,7 @@ namespace BulkyBookWeb.Controllers
         [HttpPost]
         [ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public IActionResult DeleteCategory(int id)
+        public async Task<IActionResult> DeleteCategoryAsync(int id)
         {
             var category = _context.Categories.Find(id);
 
@@ -89,7 +97,8 @@ namespace BulkyBookWeb.Controllers
                 return NotFound();
 
             _context.Categories.Remove(category);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
+
             TempData["success"] = "Category is deleted successfully";
 
             return RedirectToAction("Index");

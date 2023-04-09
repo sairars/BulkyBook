@@ -1,6 +1,6 @@
 ﻿@model Category
 
-<form method="post">
+<form method="post" asp-action="Update">
     <div class="border p-3 mt-4">
         <div class="row pb-2">
             <h2 class="text-primary">Edit</h2>
@@ -16,6 +16,7 @@
         <input type="text" asp-for="DisplayOrder" class="form-control" />
             <span asp-validation-for="DisplayOrder" class="text-danger"></span>
         </div>
+        <input hidden asp-for="Id" />
         <button type="submit" class="btn btn-primary">Update</button>
         <a class="btn btn-secondary" role="button" asp-controller="Categories" asp-action="Index">Go Back</a>
     </div>
