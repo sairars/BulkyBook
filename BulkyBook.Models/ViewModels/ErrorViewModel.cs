@@ -1,4 +1,4 @@
-namespace BulkyBook.Models
+namespace BulkyBook.Core.ViewModels
 {
     public class ErrorViewModel
     {

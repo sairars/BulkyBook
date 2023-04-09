@@ -1,4 +1,4 @@
-﻿using BulkyBook.Models;
+﻿using BulkyBook.Core.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace BulkyBookWeb.Data
