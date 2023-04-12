@@ -10,6 +10,7 @@ namespace BulkyBook.Core
     public interface IUnitOfWork
     {
         ICategoryRepository Categories { get; }
+        ICoverTypeRepository CoverTypes { get; }
 
         void Complete();
     }
