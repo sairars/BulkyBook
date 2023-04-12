@@ -1,23 +1,21 @@
-﻿using BulkyBook.Core.Models;
-using BulkyBookWeb.Data;
+﻿using BulkyBook.Core;
+using BulkyBook.Core.Models;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace BulkyBookWeb.Controllers
 {
     public class CategoriesController : Controller
     {
-        private readonly ApplicationDbContext _context;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public CategoriesController(ApplicationDbContext context)
+        public CategoriesController(IUnitOfWork unitOfWork)
         {
-            _context = context;
+            _unitOfWork = unitOfWork;
         }
 
-        [ActionName("Index")]
-        public async Task<IActionResult> IndexAsync()
+        public IActionResult Index()
         {
-            var categories = await _context.Categories.ToListAsync();
+            var categories = _unitOfWork.Categories.GetAll();
             return View(categories);
         }
 
@@ -26,10 +24,9 @@ namespace BulkyBookWeb.Controllers
             return View();
         }
 
-        [ActionName("Edit")]
-        public async Task<IActionResult> EditAsync(int id)
+        public IActionResult Edit(int id)
         {
-            var category = await _context.Categories.FindAsync(id);
+            var category = _unitOfWork.Categories.Get(id);
 
             if (category == null)
                 return NotFound();
@@ -37,10 +34,9 @@ namespace BulkyBookWeb.Controllers
             return View(category);
         }
 
-        [ActionName("Delete")]
-        public async Task<IActionResult> DeleteAsync(int id)
+        public IActionResult Delete(int id)
         {
-            var category = await _context.Categories.FindAsync(id);
+            var category = _unitOfWork.Categories.Get(id);
 
             if (category == null)
                 return NotFound();
@@ -49,9 +45,8 @@ namespace BulkyBookWeb.Controllers
         }
 
         [HttpPost]
-        [ActionName("Create")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> CreateAsync(Category category)
+        public IActionResult Create(Category category)
         {
             if (category.Name == category.DisplayOrder.ToString())
                 ModelState.AddModelError("DisplayOrder", "Display Order cannot be same as Category Name");
@@ -59,8 +54,8 @@ namespace BulkyBookWeb.Controllers
             if (!ModelState.IsValid)
                 return View(category);
 
-            await _context.Categories.AddAsync(category);
-            await _context.SaveChangesAsync();
+            _unitOfWork.Categories.Add(category);
+            _unitOfWork.Complete();
             
             TempData["success"] = "Category is created successfully";
 
@@ -68,9 +63,8 @@ namespace BulkyBookWeb.Controllers
         }
 
         [HttpPost]
-        [ActionName("Update")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> UpdateAsync(Category category)
+        public IActionResult Update(Category category)
         {
             if (category.Name == category.DisplayOrder.ToString())
                 ModelState.AddModelError("DisplayOrder", "Display Order cannot be same as Category Name");
@@ -78,8 +72,8 @@ namespace BulkyBookWeb.Controllers
             if (!ModelState.IsValid)
                 return View(category);
 
-            _context.Categories.Update(category);
-            await _context.SaveChangesAsync();
+            _unitOfWork.Categories.Update(category);
+            _unitOfWork.Complete();
 
             TempData["success"] = "Category is updated successfully";
 
@@ -89,15 +83,15 @@ namespace BulkyBookWeb.Controllers
         [HttpPost]
         [ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteCategoryAsync(int id)
+        public IActionResult DeleteCategory(int id)
         {
-            var category = _context.Categories.Find(id);
+            var category = _unitOfWork.Categories.Get(id);
 
             if (category == null)
                 return NotFound();
 
-            _context.Categories.Remove(category);
-            await _context.SaveChangesAsync();
+            _unitOfWork.Categories.Remove(category);
+            _unitOfWork.Complete();
 
             TempData["success"] = "Category is deleted successfully";
 
