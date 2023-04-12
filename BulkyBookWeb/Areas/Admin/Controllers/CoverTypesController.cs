@@ -2,7 +2,7 @@
 using BulkyBook.Core.Models;
 using Microsoft.AspNetCore.Mvc;
 
-namespace BulkyBookWeb.Controllers
+namespace BulkyBookWeb.Areas.Admin.Controllers
 {
     public class CoverTypesController : Controller
     {
@@ -53,7 +53,7 @@ namespace BulkyBookWeb.Controllers
 
             _unitOfWork.CoverTypes.Add(coverType);
             _unitOfWork.Complete();
-            
+
             TempData["success"] = "Cover Type is created successfully";
 
             return RedirectToAction("Index");

@@ -2,7 +2,7 @@
 using BulkyBook.Core.Models;
 using Microsoft.AspNetCore.Mvc;
 
-namespace BulkyBookWeb.Controllers
+namespace BulkyBookWeb.Areas.Admin.Controllers
 {
     public class CategoriesController : Controller
     {
@@ -56,7 +56,7 @@ namespace BulkyBookWeb.Controllers
 
             _unitOfWork.Categories.Add(category);
             _unitOfWork.Complete();
-            
+
             TempData["success"] = "Category is created successfully";
 
             return RedirectToAction("Index");
