@@ -15,18 +15,21 @@
     </div>
 </div>
 
-<table class="table table-striped table-bordered w-100">
+<table class="table table-striped table-bordered w-100" id="Products">
     <thead>
         <tr>
             <th>Title</th>
             <th>ISBN</th>
             <th>Price</th>
             <th>Author</th>
-            <th>Category</th>
-            <th></th>
+            @*<th>Category</th>
+            <th></th>*@
         </tr>
     </thead>
 </table>
 
 <partial name="_Notification"></partial>
 
+@section Scripts {
+    <script src="~/js/Product.js"></script>
+}

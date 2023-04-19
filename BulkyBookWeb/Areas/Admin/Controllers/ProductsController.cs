@@ -9,16 +9,17 @@ namespace BulkyBookWeb.Areas.Admin.Controllers
     public class ProductsController : Controller
     {
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IWebHostEnvironment _webHostEnvironment;
 
-        public ProductsController(IUnitOfWork unitOfWork)
+        public ProductsController(IUnitOfWork unitOfWork, IWebHostEnvironment webHostEnvironment)
         {
             _unitOfWork = unitOfWork;
+            _webHostEnvironment = webHostEnvironment;
         }
 
         public IActionResult Index()
         {
-            var products = _unitOfWork.Products.GetAll();
-            return View(products);
+            return View();
         }
 
         public IActionResult Create()
@@ -56,15 +57,30 @@ namespace BulkyBookWeb.Areas.Admin.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Create(ProductFormViewModel viewModel, IFormFile file)
+        public IActionResult Save(ProductFormViewModel viewModel, IFormFile? file)
         {
             if (!ModelState.IsValid)
-                return View("ProductFormViewModel", viewModel);
+                return View("ProductForm", viewModel);
 
-            //_unitOfWork.Products.Add(category);
-            //_unitOfWork.Complete();
+            var rootPath = _webHostEnvironment.WebRootPath;
 
-            //TempData["success"] = "Product is created successfully";
+            if (file != null)
+            {
+                var fileName = Guid.NewGuid().ToString();
+                var uploadPath = Path.Combine(rootPath, @"images\products");
+                var extension = Path.GetExtension(file.FileName);
+                fileName = Path.Combine(rootPath, fileName);
+
+                using var fileStream = new FileStream(Path.Combine(uploadPath, fileName + extension), FileMode.Create);
+                file.CopyTo(fileStream);
+
+                viewModel.Product.ImageUrl = @"\images\products\" + fileName + extension;
+            }
+
+            _unitOfWork.Products.Add(viewModel.Product);
+            _unitOfWork.Complete();
+
+            TempData["success"] = "Product is created successfully";
 
             return RedirectToAction("Index");
         }
@@ -104,5 +120,16 @@ namespace BulkyBookWeb.Areas.Admin.Controllers
 
             return RedirectToAction("Index");
         }
+
+        #region API CALLS
+
+        [HttpGet]
+        public IActionResult GetAllProducts()
+        {
+            var products = _unitOfWork.Products.GetAll();
+            return Json(new { productsData = products });
+        }
+
+        #endregion 
     }
 }

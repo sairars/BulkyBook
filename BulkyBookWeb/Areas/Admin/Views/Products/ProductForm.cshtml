@@ -52,7 +52,7 @@
         </div>
         <div class="mb-3">
             <label asp-for="Product.ImageUrl" class="form-label"></label>
-            <input type="file" id="uploadBox" class="form-control" />
+            <input type="file" id="uploadBox" name="file" class="form-control" />
         </div>
         <div class="mb-3 col-6">
             <label asp-for="Product.CategoryId" class="form-label"></label>
@@ -68,7 +68,15 @@
             </select>
             <span asp-validation-for="Product.CoverTypeId" class="text-danger"></span>
         </div>
-        <input hidden asp-for="Product.Id" />
+        @if(Model.IsEdit)
+        {
+            <input hidden asp-for="Product.Id" />
+        }
+        else
+        {
+            <input hidden asp-for="Product.Id" value="0" />
+        }
+
         <div class="col-12">
             @if(Model.IsEdit)
             {
