@@ -31,14 +31,26 @@ namespace BulkyBook.DataAccess.Repositories
             return _entities.Where(predicate);
         }
 
-        public TEntity? Get(int id)
+        public TEntity? Get(Expression<Func<TEntity, bool>> predicate, IEnumerable<string>? includeProperties = null)
         {
-            return _entities.Find(id);
+            var query = _entities.Where(predicate);
+            
+            if (includeProperties != null)
+                foreach (var includeProperty in includeProperties)
+                    query = query.Include(includeProperty);
+
+            return query.FirstOrDefault();
         }
 
-        public IEnumerable<TEntity> GetAll()
+        public IEnumerable<TEntity> GetAll(IEnumerable<string>? includeProperties = null)
         {
-            return _entities;
+            var query = _entities.AsQueryable<TEntity>();
+
+            if (includeProperties != null)
+                foreach (var includeProperty in includeProperties)
+                    query = query.Include(includeProperty);
+
+            return query;
         }
 
         public void Remove(TEntity entity)

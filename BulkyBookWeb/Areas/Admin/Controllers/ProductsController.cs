@@ -37,22 +37,21 @@ namespace BulkyBookWeb.Areas.Admin.Controllers
 
         public IActionResult Edit(int id)
         {
-            var category = _unitOfWork.Categories.Get(id);
+            var product = _unitOfWork.Products.Get(p => p.Id == id);
 
-            if (category == null)
+            if (product == null)
                 return NotFound();
 
-            return View(category);
-        }
+            var viewModel = new ProductFormViewModel
+            {
+                Product = product,
+                Categories = _unitOfWork.Categories.GetAll(),
+                CoverTypes = _unitOfWork.CoverTypes.GetAll(),
+                Heading = MethodBase.GetCurrentMethod().Name,
+                IsEdit = true
+            };
 
-        public IActionResult Delete(int id)
-        {
-            var category = _unitOfWork.Categories.Get(id);
-
-            if (category == null)
-                return NotFound();
-
-            return View(category);
+            return View("ProductForm", viewModel);
         }
 
         [HttpPost]
@@ -61,62 +60,44 @@ namespace BulkyBookWeb.Areas.Admin.Controllers
         {
             if (!ModelState.IsValid)
                 return View("ProductForm", viewModel);
-
-            var rootPath = _webHostEnvironment.WebRootPath;
-
+            
             if (file != null)
             {
-                var fileName = Guid.NewGuid().ToString();
-                var uploadPath = Path.Combine(rootPath, @"images\products");
-                var extension = Path.GetExtension(file.FileName);
-                fileName = Path.Combine(rootPath, fileName);
+                var uploadPath = Path.Combine(_webHostEnvironment.WebRootPath, @"images\products");
 
-                using var fileStream = new FileStream(Path.Combine(uploadPath, fileName + extension), FileMode.Create);
+                if (viewModel.Product.ImageUrl != null) 
+                {
+                    string oldFileName = Path.GetFileName(viewModel.Product.ImageUrl);
+                    string oldFilePath = Path.Combine(uploadPath, oldFileName);
+
+                    if (System.IO.File.Exists(oldFilePath))
+                        System.IO.File.Delete(oldFilePath);
+                }
+               
+                var newFileName = Guid.NewGuid().ToString();
+                
+                var extension = Path.GetExtension(file.FileName);
+
+                using var fileStream = new FileStream(Path.Combine(uploadPath, newFileName + extension), FileMode.Create);
                 file.CopyTo(fileStream);
 
-                viewModel.Product.ImageUrl = @"\images\products\" + fileName + extension;
+                viewModel.Product.ImageUrl = @"\images\products\" + newFileName + extension;
             }
 
-            _unitOfWork.Products.Add(viewModel.Product);
-            _unitOfWork.Complete();
+            if (viewModel.Product.Id == 0)
+            {
+                _unitOfWork.Products.Add(viewModel.Product);
+                _unitOfWork.Complete();
 
-            TempData["success"] = "Product is created successfully";
+                TempData["success"] = "Product is created successfully";
+            }
+            else
+            {
+                _unitOfWork.Products.Update(viewModel.Product);
+                _unitOfWork.Complete();
 
-            return RedirectToAction("Index");
-        }
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public IActionResult Update(Category category)
-        {
-            if (category.Name == category.DisplayOrder.ToString())
-                ModelState.AddModelError("DisplayOrder", "Display Order cannot be same as Category Name");
-
-            if (!ModelState.IsValid)
-                return View(category);
-
-            _unitOfWork.Categories.Update(category);
-            _unitOfWork.Complete();
-
-            TempData["success"] = "Category is updated successfully";
-
-            return RedirectToAction("Index");
-        }
-
-        [HttpPost]
-        [ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public IActionResult DeleteCategory(int id)
-        {
-            var category = _unitOfWork.Categories.Get(id);
-
-            if (category == null)
-                return NotFound();
-
-            _unitOfWork.Categories.Remove(category);
-            _unitOfWork.Complete();
-
-            TempData["success"] = "Category is deleted successfully";
+                TempData["success"] = "Product is updated successfully";
+            }
 
             return RedirectToAction("Index");
         }
@@ -126,8 +107,30 @@ namespace BulkyBookWeb.Areas.Admin.Controllers
         [HttpGet]
         public IActionResult GetAllProducts()
         {
-            var products = _unitOfWork.Products.GetAll();
+            var products = _unitOfWork.Products.GetAll(new List<string> { "Category", "CoverType"});
             return Json(new { productsData = products });
+        }
+
+        [HttpDelete]
+        public IActionResult Delete(int id)
+        {
+            var product = _unitOfWork.Products.Get(p => p.Id == id);
+
+            if (product == null)
+                return Json(new { success = false, message = "Product to be deleted could not be found" });
+
+            var fileDirectory = Path.Combine(_webHostEnvironment.WebRootPath, @"images\products");
+
+            string fileName = Path.GetFileName(product.ImageUrl);
+            string filePath = Path.Combine(fileDirectory, fileName);
+
+            if (System.IO.File.Exists(filePath))
+                System.IO.File.Delete(filePath);
+
+            _unitOfWork.Products.Remove(product);
+            _unitOfWork.Complete();
+
+            return Json(new { success = true, message = "Product deleted" });
         }
 
         #endregion 

@@ -26,7 +26,7 @@ namespace BulkyBookWeb.Areas.Admin.Controllers
 
         public IActionResult Edit(int id)
         {
-            var coverTypes = _unitOfWork.CoverTypes.Get(id);
+            var coverTypes = _unitOfWork.CoverTypes.Get(c => c.Id == id);
 
             if (coverTypes == null)
                 return NotFound();
@@ -36,7 +36,7 @@ namespace BulkyBookWeb.Areas.Admin.Controllers
 
         public IActionResult Delete(int id)
         {
-            var coverTypes = _unitOfWork.CoverTypes.Get(id);
+            var coverTypes = _unitOfWork.CoverTypes.Get(c => c.Id == id);
 
             if (coverTypes == null)
                 return NotFound();
@@ -79,7 +79,7 @@ namespace BulkyBookWeb.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult DeleteCoverType(int id)
         {
-            var coverType = _unitOfWork.CoverTypes.Get(id);
+            var coverType = _unitOfWork.CoverTypes.Get(c => c.Id == id);
 
             if (coverType == null)
                 return NotFound();

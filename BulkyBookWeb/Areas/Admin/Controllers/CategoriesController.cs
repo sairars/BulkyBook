@@ -26,7 +26,7 @@ namespace BulkyBookWeb.Areas.Admin.Controllers
 
         public IActionResult Edit(int id)
         {
-            var category = _unitOfWork.Categories.Get(id);
+            var category = _unitOfWork.Categories.Get(c => c.Id == id);
 
             if (category == null)
                 return NotFound();
@@ -36,7 +36,7 @@ namespace BulkyBookWeb.Areas.Admin.Controllers
 
         public IActionResult Delete(int id)
         {
-            var category = _unitOfWork.Categories.Get(id);
+            var category = _unitOfWork.Categories.Get(c => c.Id == id);
 
             if (category == null)
                 return NotFound();
@@ -85,7 +85,7 @@ namespace BulkyBookWeb.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult DeleteCategory(int id)
         {
-            var category = _unitOfWork.Categories.Get(id);
+            var category = _unitOfWork.Categories.Get(c => c.Id == id);
 
             if (category == null)
                 return NotFound();
