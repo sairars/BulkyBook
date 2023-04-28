@@ -108,23 +108,5 @@
       <partial name="_ValidationScriptsPartial"/>
   }
 
-  <script>
-        $(document).ready(function () {
-           $("#productForm").on("click", ".js-validate-upload", function() {
-               let uploadBox = $("#uploadBox");
-                
-               if (uploadBox.val() !== "") {
-                    return true;
-               }
-               
-               Swal.fire({
-                        icon: 'error',
-                        title: 'Oops...',
-                        text: 'Please upload an image!'
-                    });
-               
-               return false; 
-           });
-        });
-  </script>
+  <script src="~/js/products/productForm.js"></script>
 }

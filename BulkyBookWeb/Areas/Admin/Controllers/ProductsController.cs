@@ -117,7 +117,7 @@ namespace BulkyBookWeb.Areas.Admin.Controllers
             var product = _unitOfWork.Products.Get(p => p.Id == id);
 
             if (product == null)
-                return Json(new { success = false, message = "Product to be deleted could not be found" });
+                return Json(new { success = false, message = "Unable to complete product deletion" });
 
             var fileDirectory = Path.Combine(_webHostEnvironment.WebRootPath, @"images\products");
 
@@ -130,7 +130,7 @@ namespace BulkyBookWeb.Areas.Admin.Controllers
             _unitOfWork.Products.Remove(product);
             _unitOfWork.Complete();
 
-            return Json(new { success = true, message = "Product deleted" });
+            return Json(new { success = true, message = "Product has been successfully deleted" });
         }
 
         #endregion 

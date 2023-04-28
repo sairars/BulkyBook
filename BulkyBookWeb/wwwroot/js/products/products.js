@@ -11,7 +11,7 @@ let ProductsController = function () {
 
         loadDataTable();
 
-        container.on("click", ".js-delete", deleteProduct);
+        container.on("click", ".js-delete", confirmDeleteProduct);
     };
 
     let loadDataTable = function () {
@@ -43,30 +43,41 @@ let ProductsController = function () {
         });
     };
 
-    let deleteProduct = function () {
-        let button = $(this);
+    let confirmDeleteProduct = function () {
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "You won't be able to revert this!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, delete it!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                deleteProduct($(this));
+            }
+        })
+    };
+
+    let deleteProduct = function (button) {
         let productId = button.attr("data-product-id");
         $.ajax({
             url: "/admin/api/products/" + productId,
-            type: "DELETE"
+            method: "DELETE"
         })
-            .done(function () {
-                table
-                    .row(button.parents('tr'))
-                    .remove()
-                    .draw();
+            .done(function (data) {
+                table.ajax.reload();
+                toastr.success(data);
             })
-            .fail(function () { alert("Failed"); });
-    };
+            .fail(function (data) {
+                toastr.error(data);
+            });
+    }
 
     return {
         init: init
     };
 }();
-
-
-
-
 
 
 

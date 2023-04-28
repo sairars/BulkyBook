@@ -31,7 +31,7 @@ namespace BulkyBookWeb.Areas.Admin.Controllers.api
             var product = _unitOfWork.Products.Get(p => p.Id == id);
 
             if (product == null)
-                return NotFound();
+                return NotFound("Product could not be deleted");
 
             var fileDirectory = Path.Combine(_webHostEnvironment.WebRootPath, @"images\products");
 
@@ -44,7 +44,7 @@ namespace BulkyBookWeb.Areas.Admin.Controllers.api
             _unitOfWork.Products.Remove(product);
             _unitOfWork.Complete();
 
-            return Ok();
+            return Ok("Product deleted successfully");
         }
     }
 }
