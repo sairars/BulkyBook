@@ -1,7 +1,7 @@
 ﻿using BulkyBook.Core;
 using BulkyBook.Core.Repositories;
 using BulkyBook.DataAccess.Repositories;
-using BulkyBookWeb.Data;
+using BulkyBook.DataAccess;
 
 namespace BulkyBook.DataAccess
 {
