@@ -6,6 +6,7 @@ using System.Reflection;
 
 namespace BulkyBookWeb.Areas.Admin.Controllers
 {
+    [Area("Admin")]
     public class ProductsController : Controller
     {
         private readonly IUnitOfWork _unitOfWork;
