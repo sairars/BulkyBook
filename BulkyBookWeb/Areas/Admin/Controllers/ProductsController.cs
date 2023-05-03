@@ -109,7 +109,7 @@ namespace BulkyBookWeb.Areas.Admin.Controllers
         public IActionResult GetAllProducts()
         {
             var products = _unitOfWork.Products.GetAll(new List<string> { "Category", "CoverType"});
-            return Json(new { productsData = products });
+            return Json(new { data = products });
         }
 
         [HttpDelete]

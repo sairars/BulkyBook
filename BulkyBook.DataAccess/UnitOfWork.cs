@@ -11,6 +11,7 @@ namespace BulkyBook.DataAccess
         public ICategoryRepository Categories { get; }
         public ICoverTypeRepository CoverTypes { get; }
         public IProductRepository Products { get; set; }
+        public ICompanyRepository Companies { get; set; }
 
         public UnitOfWork(ApplicationDbContext context)
         {
@@ -18,6 +19,7 @@ namespace BulkyBook.DataAccess
             Categories = new CategoryRepository(_context);
             CoverTypes = new CoverTypeRepository(_context);
             Products = new ProductRepository(_context);
+            Companies = new CompanyRepository(_context);
         }
 
         public void Complete()

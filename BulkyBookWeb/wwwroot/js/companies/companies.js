@@ -1,8 +1,8 @@
 ﻿$(document).ready(function () {
-    ProductsController.init("#Products");
+    CompaniesController.init("#Companies");
 });
 
-let ProductsController = function () {
+let CompaniesController = function () {
     let container;
     let table;
 
@@ -11,29 +11,30 @@ let ProductsController = function () {
 
         loadDataTable();
 
-        container.on("click", ".js-delete", confirmDeleteProduct);
+        container.on("click", ".js-delete", confirmDeleteCompany);
     };
 
     let loadDataTable = function () {
         table = container.DataTable({
             ajax: {
-                url: '/admin/api/products',
+                url: '/admin/api/companies',
                 dataSrc: ''
             },
             columns: [
-                { data: 'title' },
-                { data: 'isbn' },
-                { data: 'price' },
-                { data: 'author' },
-                { data: 'category.name' },
+                { data: 'name' },
+                { data: 'phoneNumber' },
+                { data: 'streetAddress' },
+                { data: 'city' },
+                { data: 'state' },
+                { data: 'postalCode' },
                 {
                     data: "id",
                     render: function (data) {
                         return `<div class="btn-group w-75" role="group">
-                                <a href="/Admin/Products/Edit/${data}" class="btn btn-primary mx-2" role="button">
+                                <a href="/Admin/Companies/Edit/${data}" class="btn btn-primary mx-2" role="button">
                                     <i class="bi bi-pencil-square me-2"></i>Edit
                                 </a>
-                                <a class="btn btn-danger mx-2 js-delete" data-product-id="${data}" role="button">
+                                <a class="btn btn-danger mx-2 js-delete" data-company-id="${data}" role="button">
                                     <i class="bi bi-trash me-2"></i>Delete
                                 </a>
                             </div>`;
@@ -43,7 +44,7 @@ let ProductsController = function () {
         });
     };
 
-    let confirmDeleteProduct = function () {
+    let confirmDeleteCompany = function () {
         Swal.fire({
             title: 'Are you sure?',
             text: "You won't be able to revert this!",
@@ -54,15 +55,15 @@ let ProductsController = function () {
             confirmButtonText: 'Yes, delete it!'
         }).then((result) => {
             if (result.isConfirmed) {
-                deleteProduct($(this));
+                deleteCompany($(this));
             }
         })
     };
 
-    let deleteProduct = function (button) {
-        let productId = button.attr("data-product-id");
+    let deleteCompany = function (button) {
+        let companyId = button.attr("data-company-id");
         $.ajax({
-            url: "/admin/api/products/" + productId,
+            url: "/admin/api/companies/" + companyId,
             method: "DELETE"
         })
             .done(function (data) {
@@ -78,5 +79,7 @@ let ProductsController = function () {
         init: init
     };
 }();
+
+
 
 
