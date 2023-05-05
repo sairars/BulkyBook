@@ -1,6 +1,8 @@
 using BulkyBook.Core;
 using BulkyBook.DataAccess;
+using BulkyBook.Utility;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
 
 namespace BulkyBookWeb
@@ -14,18 +16,17 @@ namespace BulkyBookWeb
             // Add services to the container.
             builder.Services.AddControllersWithViews();
             builder.Services.AddRazorPages();
+
             builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(
                 builder.Configuration.GetConnectionString("DefaultConnection")
                 ));
 
-            builder.Services.AddDefaultIdentity<IdentityUser>()
+            builder.Services.AddIdentity<IdentityUser, IdentityRole>().AddDefaultTokenProviders()
                 .AddEntityFrameworkStores<ApplicationDbContext>();
+            builder.Services.AddSingleton<IEmailSender, EmailSender>();
 
             builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
             
-
-            
-
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.

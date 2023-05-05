@@ -12,7 +12,6 @@ let validateFileUpload = function () {
 
     Swal.fire({
         icon: 'error',
-        title: 'Oops...',
         text: 'Please upload an image!'
     });
 
