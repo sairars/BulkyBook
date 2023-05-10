@@ -60,7 +60,7 @@ namespace BulkyBookWeb.Areas.Admin.Controllers
 
             TempData["success"] = "Category is created successfully";
 
-            return RedirectToAction("Index");
+            return RedirectToAction(nameof(Index));
         }
 
         [HttpPost]
@@ -78,7 +78,7 @@ namespace BulkyBookWeb.Areas.Admin.Controllers
 
             TempData["success"] = "Category is updated successfully";
 
-            return RedirectToAction("Index");
+            return RedirectToAction(nameof(Index));
         }
 
         [HttpPost]
@@ -96,7 +96,7 @@ namespace BulkyBookWeb.Areas.Admin.Controllers
 
             TempData["success"] = "Category is deleted successfully";
 
-            return RedirectToAction("Index");
+            return RedirectToAction(nameof(Index));
         }
     }
 }

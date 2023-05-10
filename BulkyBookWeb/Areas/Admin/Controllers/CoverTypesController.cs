@@ -90,7 +90,7 @@ namespace BulkyBookWeb.Areas.Admin.Controllers
 
             TempData["success"] = "Cover Type is deleted successfully";
 
-            return RedirectToAction("Index");
+            return RedirectToAction(nameof(Index));
         }
     }
 }

@@ -13,6 +13,7 @@ namespace BulkyBook.Core
         ICoverTypeRepository CoverTypes { get; }
         IProductRepository Products { get; }
         ICompanyRepository Companies { get; }
+        IShoppingCartItemRepository ShoppingCartItems { get; }
         void Complete();
     }
 }

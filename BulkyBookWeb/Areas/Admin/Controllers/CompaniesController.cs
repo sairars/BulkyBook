@@ -56,7 +56,7 @@ namespace BulkyBookWeb.Areas.Admin.Controllers
                 TempData["success"] = "Company is updated successfully";
             }
 
-            return RedirectToAction("Index");
+            return RedirectToAction(nameof(Index));
         }
 
         #region API Calls

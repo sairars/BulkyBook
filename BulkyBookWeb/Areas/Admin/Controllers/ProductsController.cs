@@ -100,7 +100,7 @@ namespace BulkyBookWeb.Areas.Admin.Controllers
                 TempData["success"] = "Product is updated successfully";
             }
 
-            return RedirectToAction("Index");
+            return RedirectToAction(nameof(Index));
         }
 
         #region API CALLS
@@ -108,7 +108,7 @@ namespace BulkyBookWeb.Areas.Admin.Controllers
         [HttpGet]
         public IActionResult GetAllProducts()
         {
-            var products = _unitOfWork.Products.GetAll(new List<string> { "Category", "CoverType"});
+            var products = _unitOfWork.Products.GetAll(includeProperties:new List<string> { "Category", "CoverType"});
             return Json(new { data = products });
         }
 

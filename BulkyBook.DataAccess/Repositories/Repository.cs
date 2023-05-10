@@ -26,14 +26,14 @@ namespace BulkyBook.DataAccess.Repositories
             _entities.AddRange(entities);
         }
 
-        public IEnumerable<TEntity> FindBy(Expression<Func<TEntity, bool>> predicate)
+        public IEnumerable<TEntity> FindBy(Expression<Func<TEntity, bool>> filter)
         {
-            return _entities.Where(predicate);
+            return _entities.Where(filter);
         }
 
-        public TEntity? Get(Expression<Func<TEntity, bool>> predicate, IEnumerable<string>? includeProperties = null)
+        public TEntity? Get(Expression<Func<TEntity, bool>> filter, IEnumerable<string>? includeProperties = null)
         {
-            var query = _entities.Where(predicate);
+            var query = _entities.Where(filter);
             
             if (includeProperties != null)
                 foreach (var includeProperty in includeProperties)
@@ -42,9 +42,13 @@ namespace BulkyBook.DataAccess.Repositories
             return query.FirstOrDefault();
         }
 
-        public IEnumerable<TEntity> GetAll(IEnumerable<string>? includeProperties = null)
+        public IEnumerable<TEntity> GetAll(Expression<Func<TEntity, bool>>? filter = null, 
+                                            IEnumerable<string>? includeProperties = null)
         {
             var query = _entities.AsQueryable<TEntity>();
+
+            if (filter != null)
+                query = query.Where(filter);
 
             if (includeProperties != null)
                 foreach (var includeProperty in includeProperties)

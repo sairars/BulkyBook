@@ -21,7 +21,7 @@ namespace BulkyBookWeb.Areas.Admin.Controllers.api
         [HttpGet]
         public IActionResult GetAllProducts()
         {
-            var products = _unitOfWork.Products.GetAll(new List<string> { "Category", "CoverType" });
+            var products = _unitOfWork.Products.GetAll(includeProperties:new List<string> { "Category", "CoverType" });
             return Ok(products);
         }
 

@@ -1,7 +1,10 @@
 ﻿using BulkyBook.Core;
+using BulkyBook.Core.Models;
 using BulkyBook.Core.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
+using System.Security.Claims;
 
 namespace BulkyBookWeb.Areas.Customer.Controllers
 {
@@ -31,13 +34,37 @@ namespace BulkyBookWeb.Areas.Customer.Controllers
             if (product == null)
                 return NotFound();
 
-            var viewModel = new ShoppingCartViewModel
+            var shoppingCartItem = new ShoppingCartItem
             {
-                Count = 1,
+                ProductId = id,
+                Quantity = 1,
                 Product = product
             };
 
-            return View(viewModel);
+            return View(shoppingCartItem);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize]
+        public IActionResult Details(ShoppingCartItem shoppingCartItem)
+        {
+            var claimsIdentity = (ClaimsIdentity)User.Identity;
+            var userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
+
+            shoppingCartItem.UserId = userId;
+
+            var shoppingCartItemFromDb = _unitOfWork.ShoppingCartItems.Get(sc =>
+                                                                                sc.UserId == userId &&
+                                                                                sc.ProductId == shoppingCartItem.ProductId);
+
+            if (shoppingCartItemFromDb != null)
+                _unitOfWork.ShoppingCartItems.ModifyQuantity(shoppingCartItemFromDb, shoppingCartItem.Quantity);
+            else
+                _unitOfWork.ShoppingCartItems.Add(shoppingCartItem);
+            _unitOfWork.Complete();
+
+             return RedirectToAction(nameof(Index));
         }
 
         public IActionResult Privacy()

@@ -1,6 +1,7 @@
 using BulkyBook.Core;
 using BulkyBook.DataAccess;
 using BulkyBook.Utility;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
@@ -24,6 +25,12 @@ namespace BulkyBookWeb
             builder.Services.AddIdentity<IdentityUser, IdentityRole>().AddDefaultTokenProviders()
                 .AddEntityFrameworkStores<ApplicationDbContext>();
             builder.Services.AddSingleton<IEmailSender, EmailSender>();
+            builder.Services.ConfigureApplicationCookie(options =>
+            {
+                options.LoginPath = "/Identity/Account/Login";
+                options.AccessDeniedPath = "/Identity/Account/Logout";
+                options.LogoutPath = "/Identity/Account/AccessDenied";
+            });
 
             builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
             

@@ -9,9 +9,9 @@ namespace BulkyBook.Core.Repositories
 {
     public interface IRepository<TEntity> where TEntity : class
     {
-        TEntity? Get(Expression<Func<TEntity, bool>> predicate, IEnumerable<string>? includeProperties = null);
-        IEnumerable<TEntity> GetAll(IEnumerable<string>? includeProperties = null);
-        IEnumerable<TEntity> FindBy(Expression<Func<TEntity, bool>> predicate);
+        TEntity? Get(Expression<Func<TEntity, bool>> filter, IEnumerable<string>? includeProperties = null);
+        IEnumerable<TEntity> GetAll(Expression<Func<TEntity, bool>>? filter = null, IEnumerable<string>? includeProperties = null);
+        IEnumerable<TEntity> FindBy(Expression<Func<TEntity, bool>> filter);
 
         void Add(TEntity entity);
         void AddRange(IEnumerable<TEntity> entities);
