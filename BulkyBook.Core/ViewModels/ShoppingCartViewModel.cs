@@ -11,6 +11,6 @@ namespace BulkyBook.Core.ViewModels
     public class ShoppingCartViewModel
     {
         public IEnumerable<ShoppingCartItem> ShoppingCartItems { get; set; }
-        public decimal ShoppingCartTotal { get; set; }
+        public Order Order { get; set; }
     }
 }

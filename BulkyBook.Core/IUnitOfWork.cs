@@ -14,6 +14,9 @@ namespace BulkyBook.Core
         IProductRepository Products { get; }
         ICompanyRepository Companies { get; }
         IShoppingCartItemRepository ShoppingCartItems { get; }
+        IOrderRepository Orders { get; }
+        IOrderDetailRepository OrderDetails { get; }
+        IUserRepository Users { get; }
         void Complete();
     }
 }

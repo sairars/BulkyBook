@@ -26,11 +26,6 @@ namespace BulkyBook.DataAccess.Repositories
             _entities.AddRange(entities);
         }
 
-        public IEnumerable<TEntity> FindBy(Expression<Func<TEntity, bool>> filter)
-        {
-            return _entities.Where(filter);
-        }
-
         public TEntity? Get(Expression<Func<TEntity, bool>> filter, IEnumerable<string>? includeProperties = null)
         {
             var query = _entities.Where(filter);
