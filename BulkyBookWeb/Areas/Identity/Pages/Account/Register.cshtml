@@ -121,7 +121,11 @@
             });
 
             $('#registerForm').on('click', '#registerSubmit', function() {
-                console.log("test");
+
+                var selection = $('#Input_RoleName Option:Selected').text();
+
+                if (selection !== 'Company User')
+                    return;
                 let companyDropDown = $('#Input_CompanyId');
               
                 if (companyDropDown.val() !== '0') {

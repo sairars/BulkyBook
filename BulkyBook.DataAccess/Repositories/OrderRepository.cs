@@ -23,5 +23,16 @@ namespace BulkyBook.DataAccess.Repositories
                     order.PaymentStatus = paymentStatus;
             }
         }
+
+        public void UpdateStripePaymentId(int id, string sessionId, string paymentIntentId)
+        {
+            var order = _context.Orders.SingleOrDefault(o => o.Id == id);
+
+            if (order != null)
+            {
+                order.SessionId = sessionId;
+                order.PaymentIntentId = paymentIntentId;
+            }
+        }
     }
 }

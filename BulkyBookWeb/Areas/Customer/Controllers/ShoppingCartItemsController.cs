@@ -4,6 +4,7 @@ using BulkyBook.Core.ViewModels;
 using BulkyBook.Utility;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Stripe.Checkout;
 using System.Security.Claims;
 
 namespace BulkyBookWeb.Areas.Customer.Controllers
@@ -13,9 +14,6 @@ namespace BulkyBookWeb.Areas.Customer.Controllers
     public class ShoppingCartItemsController : Controller
     {
         private readonly IUnitOfWork _unitOfWork;
-
-        [BindProperty]
-        public ShoppingCartViewModel ShoppingCartViewModel { get; set; }
 
         public ShoppingCartItemsController(IUnitOfWork unitOfWork)
         {
@@ -31,19 +29,19 @@ namespace BulkyBookWeb.Areas.Customer.Controllers
             var shoppingCartItems = _unitOfWork.ShoppingCartItems.GetAll(filter: sc => sc.UserId == userId, 
                                                                             includeProperties: new List<string> { "Product"});
 
-            ShoppingCartViewModel = new ShoppingCartViewModel
+            var viewModel = new ShoppingCartViewModel
             {
                 ShoppingCartItems = shoppingCartItems,
                 Order = new()
             };
 
-            foreach (var item in ShoppingCartViewModel.ShoppingCartItems)
+            foreach (var item in viewModel.ShoppingCartItems)
             { 
                 item.Price = GetPriceBasedOn(item.Quantity, item.Product);
-                ShoppingCartViewModel.Order.Total += item.Price * item.Quantity;
+                viewModel.Order.Total += item.Price * item.Quantity;
             }
 
-            return View(ShoppingCartViewModel);
+            return View(viewModel);
         }
 
         public IActionResult Summary()
@@ -54,59 +52,59 @@ namespace BulkyBookWeb.Areas.Customer.Controllers
             var shoppingCartItems = _unitOfWork.ShoppingCartItems.GetAll(filter: sc => sc.UserId == userId,
                                                                             includeProperties: new List<string> { "Product" });
 
-            ShoppingCartViewModel = new ShoppingCartViewModel
+            var viewModel = new ShoppingCartViewModel
             {
                 ShoppingCartItems = shoppingCartItems,
                 Order = new()
             };
 
-            ShoppingCartViewModel.Order.User = _unitOfWork.Users.Get(u => u.Id == userId);
+            var user = _unitOfWork.Users.Get(u => u.Id == userId);
 
-            ShoppingCartViewModel.Order.Name = ShoppingCartViewModel.Order.User.Name;
-            ShoppingCartViewModel.Order.PhoneNumber = ShoppingCartViewModel.Order.User.PhoneNumber;
-            ShoppingCartViewModel.Order.StreetAddress = ShoppingCartViewModel.Order.User.StreetAddress;
-            ShoppingCartViewModel.Order.City = ShoppingCartViewModel.Order.User.City;
-            ShoppingCartViewModel.Order.State = ShoppingCartViewModel.Order.User.State;
-            ShoppingCartViewModel.Order.PostalCode = ShoppingCartViewModel.Order.User.PostalCode;
-                
-            foreach (var item in ShoppingCartViewModel.ShoppingCartItems)
+            viewModel.Order.Name = user.Name;
+            viewModel.Order.PhoneNumber = user.PhoneNumber;
+            viewModel.Order.StreetAddress = user.StreetAddress;
+            viewModel.Order.City = user.City;
+            viewModel.Order.State = user.State;
+            viewModel.Order.PostalCode = user.PostalCode;
+
+            foreach (var item in viewModel.ShoppingCartItems)
             {
                 item.Price = GetPriceBasedOn(item.Quantity, item.Product);
-                ShoppingCartViewModel.Order.Total += item.Price * item.Quantity;
+                viewModel.Order.Total += item.Price * item.Quantity;
             }
 
-            return View(ShoppingCartViewModel);
+            return View(viewModel);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
         [ActionName("Summary")]
-        public IActionResult SummaryPost()
+        public IActionResult SummaryPost(ShoppingCartViewModel viewModel)
         {
             var claimsIdentity = (ClaimsIdentity)User.Identity;
             var userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
 
-            ShoppingCartViewModel.ShoppingCartItems = _unitOfWork.ShoppingCartItems.GetAll(filter: sc => sc.UserId == userId,
+            viewModel.ShoppingCartItems = _unitOfWork.ShoppingCartItems.GetAll(filter: sc => sc.UserId == userId,
                                                                             includeProperties: new List<string> { "Product" });
-            ShoppingCartViewModel.Order.Status = StaticDetails.StatusPending;
-            ShoppingCartViewModel.Order.PaymentStatus = StaticDetails.PaymentStatusPending;
-            ShoppingCartViewModel.Order.CreationDate = DateTime.Now;
-            ShoppingCartViewModel.Order.UserId = userId;
+            viewModel.Order.Status = StaticDetails.StatusPending;
+            viewModel.Order.PaymentStatus = StaticDetails.PaymentStatusPending;
+            viewModel.Order.CreationDate = DateTime.Now;
+            viewModel.Order.UserId = userId;
 
-            foreach (var item in ShoppingCartViewModel.ShoppingCartItems)
+            foreach (var item in viewModel.ShoppingCartItems)
             {
                 item.Price = GetPriceBasedOn(item.Quantity, item.Product);
-                ShoppingCartViewModel.Order.Total += item.Price * item.Quantity;
+                viewModel.Order.Total += item.Price * item.Quantity;
             }
 
-            _unitOfWork.Orders.Add(ShoppingCartViewModel.Order);
+            _unitOfWork.Orders.Add(viewModel.Order);
             _unitOfWork.Complete();
 
-            foreach (var item in ShoppingCartViewModel.ShoppingCartItems)
+            foreach (var item in viewModel.ShoppingCartItems)
             {
                 var orderDetail = new OrderDetail
                 {
-                    OrderId = ShoppingCartViewModel.Order.Id,
+                    OrderId = viewModel.Order.Id,
                     ProductId = item.ProductId,
                     Quantity = item.Quantity,
                     Price = item.Price
@@ -116,10 +114,69 @@ namespace BulkyBookWeb.Areas.Customer.Controllers
             }
 
             _unitOfWork.Complete();
-            _unitOfWork.ShoppingCartItems.RemoveRange(ShoppingCartViewModel.ShoppingCartItems);
+
+            // stripe settings
+            var domain = "https://localhost:44328/";
+            var options = new SessionCreateOptions
+            {
+                LineItems = new List<SessionLineItemOptions>(),
+                Mode = "payment",
+                SuccessUrl = $"{domain}customer/ShoppingCartItems/OrderConfirmation?id={viewModel.Order.Id}",
+                CancelUrl = $"{domain}customer/ShoppingCartItems/Index"
+            };
+
+            foreach (var item in viewModel.ShoppingCartItems)
+            {
+                var sessionLineItem = new SessionLineItemOptions
+                {
+                    PriceData = new SessionLineItemPriceDataOptions
+                    {
+                        UnitAmount = (long)(item.Price * 100),
+                        Currency = "usd",
+                        ProductData = new SessionLineItemPriceDataProductDataOptions
+                        {
+                            Name = item.Product.Title
+                        }
+                    },
+                    Quantity = item.Quantity
+                };
+
+                options.LineItems.Add(sessionLineItem);
+            }
+
+            var service = new SessionService();
+            Session session = service.Create(options);
+
+            _unitOfWork.Orders.UpdateStripePaymentId(viewModel.Order.Id, session.Id, session.PaymentIntentId);
             _unitOfWork.Complete();
 
-            return RedirectToAction(nameof(Index), "Home");
+            Response.Headers.Add("Location", session.Url);
+            return new StatusCodeResult(303);
+        }
+
+
+        public IActionResult OrderConfirmation(int id)
+        {
+            var order = _unitOfWork.Orders.Get(o => o.Id == id);
+
+            if (order == null) 
+                return NotFound();
+
+            var service = new SessionService();
+            var session = service.Get(order.SessionId);
+
+            // check the stripe status
+            if (session.PaymentStatus.ToLower() == "paid")
+            {
+                _unitOfWork.Orders.UpdateStatus(order.Id, StaticDetails.StatusApproved, StaticDetails.PaymentStatusApproved);
+                _unitOfWork.Complete();
+            }
+
+            var shoppingCartItems = _unitOfWork.ShoppingCartItems.GetAll(filter: sc => sc.UserId == order.UserId);
+            _unitOfWork.ShoppingCartItems.RemoveRange(shoppingCartItems);
+            _unitOfWork.Complete();
+
+            return View(id);
         }
 
         public IActionResult Modify(int id, int change)
