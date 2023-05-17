@@ -20,7 +20,6 @@ namespace BulkyBookWeb.Areas.Customer.Controllers
             _unitOfWork = unitOfWork;
         }
 
-
         public IActionResult Index()
         {
             var claimsIdentity = (ClaimsIdentity)User.Identity;
@@ -85,8 +84,13 @@ namespace BulkyBookWeb.Areas.Customer.Controllers
 
             viewModel.ShoppingCartItems = _unitOfWork.ShoppingCartItems.GetAll(filter: sc => sc.UserId == userId,
                                                                             includeProperties: new List<string> { "Product" });
-            viewModel.Order.Status = StaticDetails.StatusPending;
-            viewModel.Order.PaymentStatus = StaticDetails.PaymentStatusPending;
+            viewModel.Order.Status = User.IsInRole(StaticDetails.CompanyUser)
+                                                        ? StaticDetails.StatusApproved 
+                                                        : StaticDetails.StatusPending;
+
+            viewModel.Order.PaymentStatus = User.IsInRole(StaticDetails.CompanyUser) 
+                                                        ? StaticDetails.PaymentStatusDelayedPayment 
+                                                        : StaticDetails.PaymentStatusPending;
             viewModel.Order.CreationDate = DateTime.Now;
             viewModel.Order.UserId = userId;
 
@@ -113,6 +117,9 @@ namespace BulkyBookWeb.Areas.Customer.Controllers
             }
 
             _unitOfWork.Complete();
+
+            if (User.IsInRole(StaticDetails.CompanyUser))
+                return RedirectToAction(nameof(OrderConfirmation), routeValues: new { viewModel.Order.Id });
 
             // stripe settings
             var domain = "https://localhost:44328/";
@@ -153,7 +160,6 @@ namespace BulkyBookWeb.Areas.Customer.Controllers
             return new StatusCodeResult(303);
         }
 
-
         public IActionResult OrderConfirmation(int id)
         {
             var order = _unitOfWork.Orders.Get(o => o.Id == id);
@@ -161,14 +167,17 @@ namespace BulkyBookWeb.Areas.Customer.Controllers
             if (order == null) 
                 return NotFound();
 
-            var service = new SessionService();
-            var session = service.Get(order.SessionId);
-
-            // check the stripe status
-            if (session.PaymentStatus.ToLower() == "paid")
+            if (order.PaymentStatus != StaticDetails.PaymentStatusDelayedPayment)
             {
-                _unitOfWork.Orders.UpdateStatus(order.Id, StaticDetails.StatusApproved, StaticDetails.PaymentStatusApproved);
-                _unitOfWork.Complete();
+                var service = new SessionService();
+                var session = service.Get(order.SessionId);
+
+                // check the stripe status
+                if (session.PaymentStatus.ToLower() == "paid")
+                {
+                    _unitOfWork.Orders.UpdateStatus(order.Id, StaticDetails.StatusApproved, StaticDetails.PaymentStatusApproved);
+                    _unitOfWork.Complete();
+                }
             }
 
             var shoppingCartItems = _unitOfWork.ShoppingCartItems.GetAll(filter: sc => sc.UserId == order.UserId);
