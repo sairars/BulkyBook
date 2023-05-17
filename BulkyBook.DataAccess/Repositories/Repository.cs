@@ -26,9 +26,10 @@ namespace BulkyBook.DataAccess.Repositories
             _entities.AddRange(entities);
         }
 
-        public TEntity? Get(Expression<Func<TEntity, bool>> filter, IEnumerable<string>? includeProperties = null)
+        public TEntity? Get(Expression<Func<TEntity, bool>> filter, IEnumerable<string>? includeProperties = null, bool tracked = true)
         {
-            var query = _entities.Where(filter);
+            var query = tracked? _entities : _entities.AsNoTracking();
+            query = query.Where(filter);
             
             if (includeProperties != null)
                 foreach (var includeProperty in includeProperties)

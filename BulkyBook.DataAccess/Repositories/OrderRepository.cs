@@ -11,6 +11,12 @@ namespace BulkyBook.DataAccess.Repositories
         {
             _context = context;
         }
+
+        public void Update(Order orderDb)
+        {
+            _context.Orders.Update(orderDb);
+        }
+
         public void UpdateStatus(int id, string status, string? paymentStatus = null)
         {
             var order = _context.Orders.SingleOrDefault(o => o.Id == id);
@@ -32,6 +38,8 @@ namespace BulkyBook.DataAccess.Repositories
             {
                 order.SessionId = sessionId;
                 order.PaymentIntentId = paymentIntentId;
+
+                order.PaymentDate = DateTime.Now;
             }
         }
     }

@@ -9,7 +9,7 @@ namespace BulkyBook.Core.Repositories
 {
     public interface IRepository<TEntity> where TEntity : class
     {
-        TEntity? Get(Expression<Func<TEntity, bool>> filter, IEnumerable<string>? includeProperties = null);
+        TEntity? Get(Expression<Func<TEntity, bool>> filter, IEnumerable<string>? includeProperties = null, bool tracked = true);
         IEnumerable<TEntity> GetAll(Expression<Func<TEntity, bool>>? filter = null, IEnumerable<string>? includeProperties = null);
 
         void Add(TEntity entity);
