@@ -153,7 +153,7 @@ namespace BulkyBookWeb.Areas.Customer.Controllers
             var service = new SessionService();
             Session session = service.Create(options);
 
-            _unitOfWork.Orders.UpdateStripePaymentId(viewModel.Order.Id, session.Id, session.PaymentIntentId);
+            _unitOfWork.Orders.UpdateStripeSessionId(viewModel.Order.Id, session.Id);
             _unitOfWork.Complete();
 
             Response.Headers.Add("Location", session.Url);
@@ -175,7 +175,8 @@ namespace BulkyBookWeb.Areas.Customer.Controllers
                 // check the stripe status
                 if (session.PaymentStatus.ToLower() == "paid")
                 {
-                    _unitOfWork.Orders.UpdateStatus(order.Id, StaticDetails.StatusApproved, StaticDetails.PaymentStatusApproved);
+                    _unitOfWork.Orders.UpdateStripePaymentId(id, session.PaymentIntentId);
+                    _unitOfWork.Orders.UpdateStatus(id, StaticDetails.StatusApproved, StaticDetails.PaymentStatusApproved);
                     _unitOfWork.Complete();
                 }
             }

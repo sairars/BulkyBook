@@ -4,19 +4,21 @@
     ViewData["Title"] = "Order Details";
 }
 
-<form method="post">
+<form method="post" id="orderDetails">
     <input asp-for="Order.Id" hidden />
     <br />
     <div class="backgroundWhite container">
         <div class="card">
-            <div class="card-header bg-dark text-light ml-0 row container">
-                <div class="col-12 d-none d-md-block col-md-6 pb-1">
-                    <i class="fas fa-shopping-cart"></i> &nbsp; Order Details
-                </div>
-                <div class="col-12 col-md-4 offset-md-2 text-right">
-                    <a class="btn btn-outline-info form-control btn-sm" asp-action="Index">
-                        Back to Orders
-                    </a>
+            <div class="card-header bg-dark text-light ml-0">
+                <div class="container row">
+                    <div class="col-12 d-none d-md-block col-md-6 pb-1">
+                        <i class="fas fa-shopping-cart"></i> &nbsp; Order Details
+                    </div>
+                    <div class="col-12 col-md-4 offset-md-2 text-right">
+                        <a class="btn btn-outline-info form-control btn-sm" asp-action="Index">
+                            Back to Orders
+                        </a>
+                    </div>
                 </div>
             </div>
             <div class="card-body">
@@ -194,7 +196,10 @@
                                     <input asp-for="Order.PaymentStatus" type="text" class="form-control" readonly />
                                 </div>
                             </div>
-                            <button type="submit" class="btn btn-warning form-control" formmethod="post" asp-action="Update">Update Order Details</button>
+                            @if (User.IsInRole(StaticDetails.Admin) || User.IsInRole(StaticDetails.Staff))
+                            {
+                                <button type="submit" class="btn btn-warning form-control" asp-action="Update">Update Order Details</button>
+                            }
                         </div>
                         <div class="col-12 col-lg-5 offset-lg-1">
                             <h4 class="d-flex justify-content-between align-items-center mb-3">
@@ -234,24 +239,25 @@
                             {
                                 @if (Model.Order.Status == StaticDetails.StatusApproved)
                                 {
-                                    <input type="submit" class="btn btn-primary form-control my-1" value="Start Processing" />
+                                    <input type="submit" class="btn btn-primary form-control my-1" value="Start Processing" asp-action="Process" />
                                 }
 
                                 @if (Model.Order.Status == StaticDetails.StatusInProcess)
                                 {
-                                    <input type="submit" class="btn btn-primary form-control my-1" value="Ship Order" />
+                                    <input type="submit" class="btn btn-primary form-control my-1 js-validate-shipping" value="Ship Order" asp-action="Ship" />
                                 }
 
                                 @if (Model.Order.PaymentStatus == StaticDetails.PaymentStatusDelayedPayment
                                && Model.Order.Status == StaticDetails.StatusShipped)
                                 {
-                                    <input type="submit" class="btn btn-success form-control my-1" value="Pay Now" />
+                                    <input type="submit" class="btn btn-success form-control my-1" value="Pay Now" asp-action="PayForOrder" />
                                 }
 
                                 @if (Model.Order.Status != StaticDetails.StatusRefunded
-                               && Model.Order.Status != StaticDetails.StatusCancelled)
+                               && Model.Order.Status != StaticDetails.StatusCancelled
+                               && Model.Order.Status != StaticDetails.StatusShipped)
                                 {
-                                    <input type="submit" class="btn btn-danger form-control my-1" value="Cancel Order" />
+                                    <input type="submit" class="btn btn-danger form-control my-1" value="Cancel Order" asp-action="Cancel" />
                                 }
                             }
                         </div>
@@ -263,3 +269,11 @@
 </form>
 
 <partial name="_Notification"></partial>
+
+@section Scripts {
+    @{
+        <partial name="_ValidationScriptsPartial" />
+    }
+
+    <script src="~/js/orders/orderDetails.js"></script>
+}

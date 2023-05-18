@@ -4,8 +4,9 @@ namespace BulkyBook.Core.Repositories
 {
     public interface IOrderRepository : IRepository<Order>
     {
-        void Update(Order orderDb);
+        void Update(Order order);
         void UpdateStatus(int id, string status, string? paymentStatus = null);
-        void UpdateStripePaymentId(int id, string sessionId, string paymentIntentId);
+        void UpdateStripeSessionId(int id, string sessionId);
+        void UpdateStripePaymentId(int id, string paymentIntentId);
     }
 }

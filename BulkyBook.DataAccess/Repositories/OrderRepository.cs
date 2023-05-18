@@ -7,14 +7,14 @@ namespace BulkyBook.DataAccess.Repositories
     {
         private readonly ApplicationDbContext _context;
 
-        public OrderRepository(ApplicationDbContext context): base(context)
+        public OrderRepository(ApplicationDbContext context) : base(context)
         {
             _context = context;
         }
 
-        public void Update(Order orderDb)
+        public void Update(Order order)
         {
-            _context.Orders.Update(orderDb);
+            _context.Orders.Update(order);
         }
 
         public void UpdateStatus(int id, string status, string? paymentStatus = null)
@@ -30,15 +30,21 @@ namespace BulkyBook.DataAccess.Repositories
             }
         }
 
-        public void UpdateStripePaymentId(int id, string sessionId, string paymentIntentId)
+        public void UpdateStripeSessionId(int id, string sessionId)
         {
             var order = _context.Orders.SingleOrDefault(o => o.Id == id);
 
             if (order != null)
-            {
                 order.SessionId = sessionId;
-                order.PaymentIntentId = paymentIntentId;
+        }
 
+        public void UpdateStripePaymentId(int id, string paymentIntentId)
+        {
+            var order = _context.Orders.SingleOrDefault(o => o.Id == id);
+
+            if (order != null && order.SessionId != null)
+            {
+                order.PaymentIntentId = paymentIntentId;
                 order.PaymentDate = DateTime.Now;
             }
         }
