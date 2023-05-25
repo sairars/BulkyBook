@@ -23,6 +23,7 @@ namespace BulkyBookWeb
                 ));
 
             builder.Services.Configure<StripeSettings>(builder.Configuration.GetSection("Stripe"));
+            builder.Services.Configure<MailKitSettings>(builder.Configuration.GetSection("MailKit"));
 
             builder.Services.AddIdentity<IdentityUser, IdentityRole>().AddDefaultTokenProviders()
                 .AddEntityFrameworkStores<ApplicationDbContext>();
@@ -30,8 +31,8 @@ namespace BulkyBookWeb
             builder.Services.ConfigureApplicationCookie(options =>
             {
                 options.LoginPath = "/Identity/Account/Login";
-                options.AccessDeniedPath = "/Identity/Account/Logout";
-                options.LogoutPath = "/Identity/Account/AccessDenied";
+                options.AccessDeniedPath = "/Identity/Account/AccessDenied";
+                options.LogoutPath = "/Identity/Account/Logout";
             });
 
             builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();

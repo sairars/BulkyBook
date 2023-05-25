@@ -1,4 +1,6 @@
 ﻿using BulkyBook.Core;
+using BulkyBook.Utility;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore.Metadata;
@@ -7,6 +9,7 @@ namespace BulkyBookWeb.Areas.Admin.Controllers.api
 {
     [Route("/admin/api/[controller]")]
     [ApiController]
+    [Authorize(Roles = StaticDetails.Admin)]
     public class ProductsController : ControllerBase
     {
         private readonly IUnitOfWork _unitOfWork;

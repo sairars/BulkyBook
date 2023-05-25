@@ -46,7 +46,7 @@ namespace BulkyBookWeb.Areas.Admin.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize(Roles = StaticDetails.Admin+","+StaticDetails.Staff)]
+        [Authorize(Roles = StaticDetails.Admin + "," + StaticDetails.Staff)]
         public IActionResult Update(OrderViewModel viewModel)
         {
             var order = viewModel.Order;
@@ -78,7 +78,7 @@ namespace BulkyBookWeb.Areas.Admin.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize(Roles =  StaticDetails.Admin +","+StaticDetails.Staff)]
+        [Authorize(Roles =  StaticDetails.Admin + "," + StaticDetails.Staff)]
         public IActionResult Process(OrderViewModel viewModel) 
         {
             var id = viewModel.Order.Id;
@@ -149,7 +149,6 @@ namespace BulkyBookWeb.Areas.Admin.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize(Roles = StaticDetails.Admin + "," + StaticDetails.Staff)]
         public IActionResult PayForOrder(OrderViewModel viewModel)
         {
             var order = viewModel.Order;
@@ -195,7 +194,6 @@ namespace BulkyBookWeb.Areas.Admin.Controllers
             return new StatusCodeResult(303);
         }
 
-        [Authorize(Roles = StaticDetails.Admin + "," + StaticDetails.Staff)]
         public IActionResult PaymentConfirmation(int id)
         {
             var order = _unitOfWork.Orders.Get(o => o.Id == id);

@@ -3,9 +3,11 @@ using BulkyBook.Core.Models;
 using BulkyBook.Core.ViewModels;
 using BulkyBook.Utility;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Stripe.Checkout;
 using System.Security.Claims;
+using System.Text.Encodings.Web;
 
 namespace BulkyBookWeb.Areas.Customer.Controllers
 {
@@ -14,10 +16,12 @@ namespace BulkyBookWeb.Areas.Customer.Controllers
     public class ShoppingCartItemsController : Controller
     {
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IEmailSender _emailSender;
 
-        public ShoppingCartItemsController(IUnitOfWork unitOfWork)
+        public ShoppingCartItemsController(IUnitOfWork unitOfWork, IEmailSender emailSender)
         {
             _unitOfWork = unitOfWork;
+            _emailSender = emailSender;
         }
 
         public IActionResult Index()
@@ -162,7 +166,7 @@ namespace BulkyBookWeb.Areas.Customer.Controllers
 
         public IActionResult OrderConfirmation(int id)
         {
-            var order = _unitOfWork.Orders.Get(o => o.Id == id);
+            var order = _unitOfWork.Orders.Get(o => o.Id == id, includeProperties: new List<string> { "User"});
 
             if (order == null) 
                 return NotFound();
@@ -184,6 +188,8 @@ namespace BulkyBookWeb.Areas.Customer.Controllers
             var shoppingCartItems = _unitOfWork.ShoppingCartItems.GetAll(filter: sc => sc.UserId == order.UserId);
             _unitOfWork.ShoppingCartItems.RemoveRange(shoppingCartItems);
             _unitOfWork.Complete();
+
+            _emailSender.SendEmailAsync(order.User.Email, "New Order - Bulky Books", "A new order has been successfully created");
 
             return View(id);
         }
