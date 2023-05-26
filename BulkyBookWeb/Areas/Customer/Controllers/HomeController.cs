@@ -1,6 +1,7 @@
 ﻿using BulkyBook.Core;
 using BulkyBook.Core.Models;
 using BulkyBook.Core.ViewModels;
+using BulkyBook.Utility;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
@@ -59,12 +60,24 @@ namespace BulkyBookWeb.Areas.Customer.Controllers
                                                                                 sc.ProductId == shoppingCartItem.ProductId);
 
             if (shoppingCartItemFromDb != null)
+            {
                 _unitOfWork.ShoppingCartItems.ModifyQuantity(shoppingCartItemFromDb, shoppingCartItem.Quantity);
+                _unitOfWork.Complete();
+            }
             else
+            {
                 _unitOfWork.ShoppingCartItems.Add(shoppingCartItem);
-            _unitOfWork.Complete();
+                _unitOfWork.Complete();
 
-             return RedirectToAction(nameof(Index));
+                var numberOfShoppingCartItems = _unitOfWork.ShoppingCartItems
+                                                            .GetAll(sc => sc.UserId == userId)
+                                                            .ToList()
+                                                            .Count();
+
+                HttpContext.Session.SetInt32(StaticDetails.SessionShoppingCart, numberOfShoppingCartItems);
+            }
+            
+            return RedirectToAction(nameof(Index));
         }
 
         public IActionResult Privacy()

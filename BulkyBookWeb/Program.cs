@@ -35,6 +35,15 @@ namespace BulkyBookWeb
                 options.LogoutPath = "/Identity/Account/Logout";
             });
 
+            builder.Services.AddDistributedMemoryCache();
+
+            builder.Services.AddSession(options =>
+            {
+                options.IdleTimeout = TimeSpan.FromMinutes(100);
+                options.Cookie.HttpOnly = true;
+                options.Cookie.IsEssential = true;
+            });
+
             builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
             
             var app = builder.Build();
@@ -53,8 +62,11 @@ namespace BulkyBookWeb
             app.UseRouting();
 
             StripeConfiguration.ApiKey = builder.Configuration.GetSection("Stripe:StripeSecretKey").Get<String>();
+            
             app.UseAuthentication();
             app.UseAuthorization();
+
+            app.UseSession();
 
             app.MapControllerRoute(
                 name: "default",

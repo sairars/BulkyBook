@@ -201,8 +201,17 @@ namespace BulkyBookWeb.Areas.Customer.Controllers
             if (shoppingCartItem == null)
                 return NotFound();
 
-            if (shoppingCartItem.Quantity+ change == 0 || change == 0)
+            if (shoppingCartItem.Quantity + change == 0 || change == 0)
+            {
                 _unitOfWork.ShoppingCartItems.Remove(shoppingCartItem);
+
+                var numberOfShoppingCartItems = _unitOfWork.ShoppingCartItems
+                                                            .GetAll(sc => sc.UserId == shoppingCartItem.UserId)
+                                                            .ToList()
+                                                            .Count();
+                
+               HttpContext.Session.SetInt32(StaticDetails.SessionShoppingCart, numberOfShoppingCartItems-1);
+            }
             else
                 _unitOfWork.ShoppingCartItems.ModifyQuantity(shoppingCartItem, change);
             
