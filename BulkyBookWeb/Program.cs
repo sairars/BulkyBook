@@ -18,6 +18,12 @@ namespace BulkyBookWeb
             builder.Services.AddControllersWithViews();
             builder.Services.AddRazorPages();
 
+            builder.Services.AddAuthentication().AddFacebook(options =>
+            {
+                options.AppId = builder.Configuration.GetSection("Facebook:FacebookAppId").Get<String>();
+                options.AppSecret = builder.Configuration.GetSection("Facebook:FacebookAppSecret").Get<String>();
+            });
+
             builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(
                 builder.Configuration.GetConnectionString("DefaultConnection")
                 ));

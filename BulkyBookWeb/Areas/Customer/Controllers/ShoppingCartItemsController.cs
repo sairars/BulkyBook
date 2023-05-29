@@ -189,6 +189,8 @@ namespace BulkyBookWeb.Areas.Customer.Controllers
             _unitOfWork.ShoppingCartItems.RemoveRange(shoppingCartItems);
             _unitOfWork.Complete();
 
+            HttpContext.Session.Clear();
+
             _emailSender.SendEmailAsync(order.User.Email, "New Order - Bulky Books", "A new order has been successfully created");
 
             return View(id);
