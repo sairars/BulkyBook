@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BulkyBook.DataAccess.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20230531181314_SeedAdminUser")]
-    partial class SeedAdminUser
+    [Migration("20230601182207_SeedUserWithAdminRole")]
+    partial class SeedUserWithAdminRole
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

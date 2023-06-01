@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using BulkyBook.Utility;
 using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace BulkyBook.DataAccess.Migrations
 {
     /// <inheritdoc />
-    public partial class SeedAdminUser : Migration
+    public partial class SeedUserWithAdminRole : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -25,8 +25,9 @@ namespace BulkyBook.DataAccess.Migrations
                                             'Admin 1', '78345', 'MI', '89 Rogerson Drive', NULL)");
 
             migrationBuilder.Sql(@$"INSERT INTO AspNetUserRoles(UserId, RoleId) 
-                                    VALUES ('ebc42e34-5590-45d6-8a90-8fa0724c3ee3', 
-                                            'd22efe36-97ba-4574-ae76-862d7fb0d3f1')");
+                                    SELECT 'ebc42e34-5590-45d6-8a90-8fa0724c3ee3', Id
+                                    FROM AspNetRoles 
+                                    WHERE Name = '{StaticDetails.Admin}'");
         }
 
         /// <inheritdoc />
