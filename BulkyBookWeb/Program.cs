@@ -1,5 +1,6 @@
 using BulkyBook.Core;
 using BulkyBook.DataAccess;
+using BulkyBook.DataAccess.DbInitializer;
 using BulkyBook.Utility;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
@@ -51,6 +52,7 @@ namespace BulkyBookWeb
             });
 
             builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+            builder.Services.AddScoped<IDbInitializer, DbInitializer>();
             
             var app = builder.Build();
 
@@ -80,7 +82,16 @@ namespace BulkyBookWeb
 
             app.MapRazorPages();
 
+            SeedDatabase(app);
+
             app.Run();
+        }
+
+        private static void SeedDatabase(WebApplication app)
+        {
+            using var scope = app.Services.CreateScope();
+            var dbInitializer = scope.ServiceProvider.GetRequiredService<IDbInitializer>();
+            dbInitializer.Initialize();
         }
     }
 }

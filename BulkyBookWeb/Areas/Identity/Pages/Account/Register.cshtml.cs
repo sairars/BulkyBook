@@ -6,9 +6,11 @@ using System.Text;
 using System.Text.Encodings.Web;
 using BulkyBook.Core;
 using BulkyBook.Core.Models;
+using BulkyBook.DataAccess;
 using BulkyBook.Utility;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -115,16 +117,6 @@ namespace BulkyBookWeb.Areas.Identity.Pages.Account
 
         public async Task OnGetAsync(string? returnUrl = null)
         {
-            var roleExist = await _roleManager.RoleExistsAsync(StaticDetails.Admin);
-
-            if (!roleExist)
-            {
-                await _roleManager.CreateAsync(new IdentityRole(StaticDetails.Admin));
-                await _roleManager.CreateAsync(new IdentityRole(StaticDetails.Staff));
-                await _roleManager.CreateAsync(new IdentityRole(StaticDetails.CompanyUser));
-                await _roleManager.CreateAsync(new IdentityRole(StaticDetails.IndividualUser));
-            }
-
             ReturnUrl = returnUrl;
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
 
