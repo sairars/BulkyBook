@@ -2,6 +2,7 @@ using BulkyBook.Core;
 using BulkyBook.DataAccess;
 using BulkyBook.DataAccess.DbInitializer;
 using BulkyBook.Utility;
+using Microsoft.AspNetCore.Authentication.Facebook;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
@@ -14,6 +15,7 @@ namespace BulkyBookWeb
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
+            
 
             // Add services to the container.
             builder.Services.AddControllersWithViews();
@@ -21,8 +23,8 @@ namespace BulkyBookWeb
 
             builder.Services.AddAuthentication().AddFacebook(options =>
             {
-                options.AppId = builder.Configuration.GetSection("Facebook:FacebookAppId").Get<String>();
-                options.AppSecret = builder.Configuration.GetSection("Facebook:FacebookAppSecret").Get<String>();
+                options.AppId = builder.Configuration["Facebook:AppId"];
+                options.AppSecret = builder.Configuration["Facebook:AppSecret"];
             });
 
             builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(
