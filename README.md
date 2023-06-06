@@ -1,4 +1,4 @@
-# [Udemy - Complete Guide to Asp.Net Core MVC - (Bhrugen Patel)]([https://codewithmosh.com/p/asp-net-mvc](https://www.udemy.com/share/101uZQ3@Luh7XcLJtZ0iOXFEu3FharS4q-RpwDzsP7h0Lrq81nYOxVeUyOjBXmkpo2DIjTU6fw==/))
+# [Udemy - Complete Guide to Asp.Net Core MVC - (Bhrugen Patel)](https://www.udemy.com/share/101uZQ3@wbae2NfiZdOr7eCDAxNjYDbFenkprJ6FlNeST5uwRgh3uXrVtE7R42c7sp6ELrj5pA==/)
 
 **BulkyBook** is a sample application created as part of my ongoing learning journey, using Bhrugen Patel's course lecture (*link above*). 
 Created a sample web application using **Asp.Net 6 MVC **, ** ASP.Net Core Identity, **EF Core**, **Repository Pattern** and **Sql Server**. 
