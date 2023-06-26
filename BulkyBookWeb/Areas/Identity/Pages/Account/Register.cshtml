@@ -66,15 +66,20 @@
             {
                 <div class="form-floating py-2 col-6">
                     <select asp-for="Input.RoleName" asp-items="new SelectList(@Model.Input.Roles, nameof(IdentityRole.Name), nameof(IdentityRole.Name))" class="form-select">
-                    <option selected>Please select role</option>
-                </select>
-            </div>
+                        <option disabled selected value="0">Please select role</option>
+                    </select>
+                    <span asp-validation-for="Input.RoleName" class="text-danger"></span>
+                </div>
+
+                <div class="form-floating py-2 col-6">
+                    <select asp-for="Input.CompanyId" asp-items="new SelectList(@Model.Input.Companies, nameof(Company.Id), nameof(Company.Name))" class="form-select">
+                        <option disabled selected>Please select company</option>
+                    </select>
+                </div>
             }
-            <div class="form-floating py-2 col-6">
-                <select asp-for="Input.CompanyId" asp-items="new SelectList(@Model.Input.Companies, nameof(Company.Id), nameof(Company.Name))" class="form-select">
-                    <option selected value="0">Please select company</option>
-                </select>
-            </div>
+            else {
+                <input hidden asp-for="Input.RoleName" value="0" />
+            }
             <button id="registerSubmit" type="submit" class="w-100 btn btn-primary">Register</button>
         </form>
     </div>
@@ -141,7 +146,7 @@
                     return;
                 let companyDropDown = $('#Input_CompanyId');
               
-                if (companyDropDown.val() !== '0') {
+                if (companyDropDown.val() !== null) {
                     return true;
                 }
 

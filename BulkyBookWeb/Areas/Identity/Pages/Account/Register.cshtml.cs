@@ -108,7 +108,9 @@ namespace BulkyBookWeb.Areas.Identity.Pages.Account
             public string? State { get; set; }
             public string? PostalCode { get; set; }
             public string? PhoneNumber { get; set; }
-            public string? RoleName { get; set; }
+
+            [Display(Name = "User Role")]
+            public string RoleName { get; set; }
             public IEnumerable<IdentityRole>? Roles { get; set; }
             public int CompanyId { get; set; }
             public IEnumerable<Company>? Companies { get; set; }
@@ -131,6 +133,7 @@ namespace BulkyBookWeb.Areas.Identity.Pages.Account
         {
             returnUrl ??= Url.Content("~/");
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
+
             if (ModelState.IsValid)
             {
                 var user = CreateUser();
@@ -154,7 +157,10 @@ namespace BulkyBookWeb.Areas.Identity.Pages.Account
                 {
                     _logger.LogInformation("User created a new account with password.");
 
-                    var role = Input.RoleName ?? StaticDetails.IndividualUser;
+                    var role = Input.RoleName.Equals("0") 
+                                    ? StaticDetails.IndividualUser 
+                                    : Input.RoleName;
+                    //var role = Input.RoleName ?? StaticDetails.IndividualUser;
                     await _userManager.AddToRoleAsync(user, role);
 
                     var userId = await _userManager.GetUserIdAsync(user);
