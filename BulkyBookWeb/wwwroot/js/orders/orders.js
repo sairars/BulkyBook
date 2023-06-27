@@ -1,4 +1,4 @@
-﻿$(document).ready(function () {
+﻿$(function () {
     OrdersController.init("#Orders");
 });
 
@@ -41,7 +41,7 @@ let OrdersController = function () {
                     render: function (data) {
                         return `<div class="btn-group w-75" role="group">
                                 <a href="/Admin/Orders/Details/${data}" class="btn btn-default" role="button">
-                                    <i class="bi bi-three-dots"></i>
+                                    <i class="bi bi-pencil-square"></i>
                                 </a>
                             </div>`;
                     }

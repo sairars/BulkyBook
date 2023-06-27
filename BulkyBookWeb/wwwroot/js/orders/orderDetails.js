@@ -1,10 +1,9 @@
-﻿$(document).ready(function () {
+﻿$(function () {
     $("#orderDetails").on("click", ".js-validate-shipping", validateShippingInfo);
 });
 
 
 let validateShippingInfo = function () {
-    console.log("I am here");
     let carrier = $("#carrier");
     let trackingNumber = $("#trackingNumber");
 
