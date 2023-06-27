@@ -1,9 +1,9 @@
-﻿$(document).ready(function () {
+﻿$(function () {
     $("#productForm").on("click", ".js-validate-upload", validateFileUpload);
 });
 
-
 let validateFileUpload = function () {
+    console.log("Hello");
     let uploadBox = $("#uploadBox");
 
     if (uploadBox.val() !== "") {
@@ -20,6 +20,7 @@ let validateFileUpload = function () {
 
 tinymce.init({
     selector: 'textarea',
-    plugins: 'anchor autolink charmap codesample emoticons image link lists media searchreplace table visualblocks wordcount',
-    toolbar: 'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image media table | align lineheight | numlist bullist indent outdent | emoticons charmap | removeformat',
+    plugins: 'autolink charmap  lists wordcount',
+    toolbar: 'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | align lineheight | numlist bullist indent outdent',
+    elementpath: false
 });

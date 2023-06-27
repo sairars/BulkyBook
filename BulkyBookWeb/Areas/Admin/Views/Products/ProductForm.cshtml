@@ -68,14 +68,14 @@
                 <div class="mb-3 col-6">
                     <label asp-for="Product.CategoryId" class="form-label"></label>
                     <select asp-for="Product.CategoryId" asp-items="new SelectList(Model.Categories, nameof(Category.Id), nameof(Category.Name))" class="form-select">
-                        <option selected>Please select one</option>
+                        <option disabled selected>Please select one</option>
                     </select>
                     <span asp-validation-for="Product.CategoryId" class="text-danger"></span>
                 </div>
                 <div class="mb-3 col-6">
                     <label asp-for="Product.CoverTypeId" class="form-label"></label>
                     <select asp-for="Product.CoverTypeId" asp-items="new SelectList(Model.CoverTypes, nameof(CoverType.Id), nameof(CoverType.Name))" class="form-select">
-                        <option selected>Please select one</option>
+                        <option disabled selected>Please select one</option>
                     </select>
                     <span asp-validation-for="Product.CoverTypeId" class="text-danger"></span>
                 </div>

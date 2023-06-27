@@ -1,4 +1,4 @@
-﻿$(document).ready(function () {
+﻿$(function () {
     ProductsController.init("#Products");
 });
 
