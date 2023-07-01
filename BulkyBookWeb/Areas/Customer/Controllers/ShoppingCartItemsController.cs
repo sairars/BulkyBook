@@ -7,7 +7,6 @@ using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Stripe.Checkout;
 using System.Security.Claims;
-using System.Text.Encodings.Web;
 
 namespace BulkyBookWeb.Areas.Customer.Controllers
 {
@@ -17,11 +16,13 @@ namespace BulkyBookWeb.Areas.Customer.Controllers
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IEmailSender _emailSender;
+        private readonly IWebHostEnvironment _webHostEnvironment;
 
-        public ShoppingCartItemsController(IUnitOfWork unitOfWork, IEmailSender emailSender)
+        public ShoppingCartItemsController(IUnitOfWork unitOfWork, IEmailSender emailSender, IWebHostEnvironment webHostEnvironment)
         {
             _unitOfWork = unitOfWork;
             _emailSender = emailSender;
+            _webHostEnvironment = webHostEnvironment;
         }
 
         public IActionResult Index()
@@ -126,7 +127,11 @@ namespace BulkyBookWeb.Areas.Customer.Controllers
                 return RedirectToAction(nameof(OrderConfirmation), routeValues: new { viewModel.Order.Id });
 
             // stripe settings
-            var domain = "https://localhost:44328/";
+            var domain = (_webHostEnvironment.IsDevelopment()) 
+                                    ? "https://localhost:44328/" 
+                                    : "https://bulky1.azurewebsites.net/";
+            
+
             var options = new SessionCreateOptions
             {
                 LineItems = new List<SessionLineItemOptions>(),

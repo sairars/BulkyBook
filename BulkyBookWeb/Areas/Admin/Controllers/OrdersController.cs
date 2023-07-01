@@ -13,10 +13,12 @@ namespace BulkyBookWeb.Areas.Admin.Controllers
     public class OrdersController : Controller
     {
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IWebHostEnvironment _webHostEnvironment;
 
-        public OrdersController(IUnitOfWork unitOfWork)
+        public OrdersController(IUnitOfWork unitOfWork, IWebHostEnvironment webHostEnvironment)
         {
             _unitOfWork = unitOfWork;
+            _webHostEnvironment = webHostEnvironment;
         }
 
         public IActionResult Index()
@@ -156,7 +158,9 @@ namespace BulkyBookWeb.Areas.Admin.Controllers
                                                                 includeProperties: new List<string> { "Product"});
 
             // stripe settings
-            var domain = "https://localhost:44328/";
+            var domain = (_webHostEnvironment.IsDevelopment())
+                                    ? "https://localhost:44328/"
+                                    : "https://bulky1.azurewebsites.net/";
             var options = new SessionCreateOptions
             {
                 LineItems = new List<SessionLineItemOptions>(),
