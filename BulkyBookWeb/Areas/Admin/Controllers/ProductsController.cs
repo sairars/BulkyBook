@@ -63,7 +63,11 @@ namespace BulkyBookWeb.Areas.Admin.Controllers
         public IActionResult Save(ProductFormViewModel viewModel, IFormFile? file)
         {
             if (!ModelState.IsValid)
+            {
+                viewModel.Categories = _unitOfWork.Categories.GetAll();
+                viewModel.CoverTypes = _unitOfWork.CoverTypes.GetAll();
                 return View("ProductForm", viewModel);
+            }   
             
             if (file != null)
             {
