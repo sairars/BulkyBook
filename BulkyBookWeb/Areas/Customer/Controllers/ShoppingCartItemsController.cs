@@ -56,6 +56,9 @@ namespace BulkyBookWeb.Areas.Customer.Controllers
             var shoppingCartItems = _unitOfWork.ShoppingCartItems.GetAll(filter: sc => sc.UserId == userId,
                                                                             includeProperties: new List<string> { "Product" });
 
+            if (shoppingCartItems.Count() < 1)
+                return NotFound();
+
             var viewModel = new ShoppingCartViewModel
             {
                 ShoppingCartItems = shoppingCartItems,
