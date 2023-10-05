@@ -21,6 +21,11 @@ The sample application is an e-commerce application that allows customers to pur
 
 [https://bulky1.azurewebsites.net/](https://bulky1.azurewebsites.net/). 
 
+**UserName and Password for Admin account is:**
+
+**U:** admin@bulky.com
+
+**P:** BulkyAdmin123$
 
 ### Sample Images
 Can be found [here](https://github.com/sairars/BulkyBook/tree/main/Images) 
