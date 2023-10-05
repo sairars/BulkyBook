@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace BulkyBook.DataAccess.Migrations
 {
     /// <inheritdoc />
-    public partial class SeedUserWithAdminRole : Migration
+    public partial class SeedAnAdminUser : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -17,15 +17,15 @@ namespace BulkyBook.DataAccess.Migrations
                                                                 LockoutEnd, LockoutEnabled, AccessFailedCount, 
                                                                 City, Discriminator, Name, PostalCode, State, StreetAddress, 
                                                                 CompanyId) 
-                                    VALUES ('ebc42e34-5590-45d6-8a90-8fa0724c3ee3', 'admin1@bulky.com', 'ADMIN1@BULKY.COM',
-                                            'admin1@bulky.com', 'ADMIN1@BULKY.COM', 0, 
-                                            'AQAAAAEAACcQAAAAEE2tBeyD+zbbov/xXKUd4DOH0TKXtLItUxzsPabwZFhibOVUTzgJA5rSuIZqSEaP/A==',
-                                            'NPRPXEWWORBV3E74E4Q2MSZGRXBR4PQV', '84188825-c7c8-4792-8adb-6f826fc62cff', 
+                                    VALUES ('94424829-d049-4048-a9c0-74cd61d0b1cb', 'admin@bulky.com', 'ADMIN@BULKY.COM',
+                                            'admin@bulky.com', 'ADMIN@BULKY.COM', 0, 
+                                            'AQAAAAEAACcQAAAAENclhiGpljT+QXZiL6c3+1ZbAdLFedx7X5j2gqnR9QvGRVelTs1Nqa/pL7qLJpcuAw==',
+                                            'QDM3VSYN4DUQ22D6YZM6AB2RNDBSWLJN', 'b339a65e-f713-48a5-9e90-c7705da63c35', 
                                             '617-877-9334', 0, 0, NULL, 1, 0, 'Barrie', 'ApplicationUser', 
-                                            'Admin 1', '78345', 'MI', '89 Rogerson Drive', NULL)");
+                                            'Bulky Admin', '78345', 'MI', '89 Rogerson Drive', NULL)");
 
             migrationBuilder.Sql(@$"INSERT INTO AspNetUserRoles(UserId, RoleId) 
-                                    SELECT 'ebc42e34-5590-45d6-8a90-8fa0724c3ee3', Id
+                                    SELECT '94424829-d049-4048-a9c0-74cd61d0b1cb', Id
                                     FROM AspNetRoles 
                                     WHERE Name = '{StaticDetails.Admin}'");
         }
@@ -34,11 +34,11 @@ namespace BulkyBook.DataAccess.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.Sql(@$"DELETE FROM AspNetUserRoles 
-                                    WHERE UserId = 'ebc42e34-5590-45d6-8a90-8fa0724c3ee3' 
+                                    WHERE UserId = '94424829-d049-4048-a9c0-74cd61d0b1cb' 
                                         AND RoleId = 'd22efe36-97ba-4574-ae76-862d7fb0d3f1'");
 
             migrationBuilder.Sql(@$"DELETE FROM AspNetUsers 
-                                    WHERE Id = 'ebc42e34-5590-45d6-8a90-8fa0724c3ee3'");
+                                    WHERE Id = '94424829-d049-4048-a9c0-74cd61d0b1cb'");
         }
     }
 }

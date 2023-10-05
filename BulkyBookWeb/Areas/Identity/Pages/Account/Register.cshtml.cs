@@ -157,10 +157,10 @@ namespace BulkyBookWeb.Areas.Identity.Pages.Account
                 {
                     _logger.LogInformation("User created a new account with password.");
 
-                    var role = Input.RoleName.Equals("0") 
-                                    ? StaticDetails.IndividualUser 
+                    var role = Input.RoleName.Equals("0")
+                                    ? StaticDetails.IndividualUser
                                     : Input.RoleName;
-                    //var role = Input.RoleName ?? StaticDetails.IndividualUser;
+
                     await _userManager.AddToRoleAsync(user, role);
 
                     var userId = await _userManager.GetUserIdAsync(user);
