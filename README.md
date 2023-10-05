@@ -20,7 +20,6 @@ The sample application is an e-commerce application that allows customers to pur
 ## Demo E-Commerce Site
 [https://bulky1.azurewebsites.net/](https://bulky1.azurewebsites.net/). 
 
-(**NOTE:** Once you visit the website, please click on the info button to learn how to interact with the application.)
 
 ### Sample Images
 Can be found [here](https://github.com/sairars/BulkyBook/tree/main/Images) 
